@@ -10,9 +10,9 @@ class Article extends Model
     protected $fillable = [ 'user_id', 'content', 'like'];
 
     public function images() {
-        return $this->hasOne('App\Image');
+        return $this->hasOne(Image::class, 'article_id');
     }
     public function video() {
-        return $this->hasOne('App\Video');
+        return $this->hasOne(Video::class, 'article_id');
     }
 }

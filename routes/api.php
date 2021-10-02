@@ -19,4 +19,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/articles', 'App\Http\Controllers\ArticleController@index');
+Route::get('/data', 'App\Http\Controllers\ArticleController@data');
+Route::get('/articles', 'App\Http\Controllers\ArticleController@getArticles');

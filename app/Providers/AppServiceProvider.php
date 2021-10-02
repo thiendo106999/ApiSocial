@@ -13,7 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        //check that app is local
+
+        //if local register your services you require for development
+     //   $this->app->register('Barryvdh\Debugbar\ServiceProvider');
     }
 
     /**

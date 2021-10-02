@@ -12,6 +12,6 @@ class Video extends Model
    
     public function article()
     {
-        return $this->belongsTo('App\Article');
+        return $this->belongsTo(Article::class, 'id');
     }
 }

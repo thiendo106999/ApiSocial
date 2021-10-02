@@ -17,7 +17,7 @@ class CreateVideosTable extends Migration
             $table->id();
             $table->string('url');
             $table->string('title');
-            $table->integer('duration');
+            $table->integer('duration')->nullable();
             $table->integer('article_id');
             $table->timestamps();
             $table->foreign('article_id')->references('id')->on('articles')->onDelete('cascade');;

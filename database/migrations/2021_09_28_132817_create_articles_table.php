@@ -17,9 +17,10 @@ class CreateArticlesTable extends Migration
             $table->id();
             $table->text('content');
             $table->integer('like');
-            $table->string('user_id');
+            $table->integer('user_id');
             $table->timestamps();
 
+            //$table->foreign('user_id')->references('id')->on('user_infos')->onDelete();
         });
     }
 

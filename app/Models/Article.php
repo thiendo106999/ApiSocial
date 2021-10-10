@@ -15,4 +15,7 @@ class Article extends Model
     public function video() {
         return $this->hasOne(Video::class, 'article_id');
     }
+    public function auth() {
+        return $this->belongsTo(UserInfo::class, 'id');
+    }
 }

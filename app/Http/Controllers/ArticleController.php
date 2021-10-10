@@ -4,26 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\Image;
+use App\Models\Tag;
+use App\Models\UserInfo;
 use App\Models\Video;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ArticleController extends Controller
 {
     public function index()
     {
-
-
         return response([
             'alo' => Article::find(1)->images()->get(),
             "image" => Image::find(2)->article()->get(),
             'video' => Video::find(1)->article()->get()
         ]);
     }
-
     public function getArticles()
     {
-
         $articles =  Article::all();
         $datas = array();
         foreach ($articles as $article) {
@@ -35,7 +35,7 @@ class ArticleController extends Controller
             $images = Image::where('article_id', $article->id);
             if ($video != null) {
                 $data['video'] = $video->pluck('url')->first();
-            }   
+            }
             if ($images != null) {
                 $data['images'] = $images->pluck('url');
             }
@@ -44,6 +44,38 @@ class ArticleController extends Controller
         return response(
             $datas
         );
+    }
+
+    public function create(Request $request)
+    {
+        try {
+            $access_token = $request->header('access_token');
+            $user = UserInfo::query();
+            $user = $user->where('access_token', $access_token)->first();
+            $article = new Article([
+                'user_id' => $user->id,
+                'content' => $request['content'],
+                'like' => 0
+            ]);
+            $article->save();
+
+            $tags = explode(' ', $request['tags']);
+            foreach ($tags as $name_tag) {
+                Log::debug($name_tag);
+
+                $tag = new Tag([
+                    'article_id' => $article->id,
+                    'name_tag' => $name_tag
+                ]);
+                $tag->save();
+            }
+        } catch (Exception $e) {
+            Log::debug('message' . $e);
+        }
+
+        return response()->json([
+            'article_id' => $article->id
+        ]);
     }
     public function data()
     {
@@ -74,7 +106,7 @@ class ArticleController extends Controller
             'like' => 100,
             'created_at' => Carbon::now()->toDateTimeString()
         ]);
-       $temp->save();
+        $temp->save();
         $video = new Video([
             'url' => 'https://www.youtube.com/watch?v=5Ah6V7ftLmA&t=1s',
             'title' => 'Quy trình chăm sóc lúa làm đòng. Nguồn: Kênh VTC16',
@@ -96,7 +128,7 @@ class ArticleController extends Controller
             'article_id' => 4,
             'created_at' => Carbon::now()->toDateTimeString()
         ]);
-       $video->save();
+        $video->save();
 
         $image = new Image([
             'url' => 'https://www.homestaygianghia.com/upload/dulich/mit/vuon-mit-dak-nong-12.jpg',

@@ -11,16 +11,6 @@ use Illuminate\Support\Facades\Response;
 
 class UploadController extends Controller
 {
-    public function uploadVideo(Request $request)
-    {
-        Log::debug($request);
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filename = $file->getClientOriginalName();
-            $path = public_path() . 'uploads/';
-            return $file->move($path, $filename);
-        }
-    }
     public function uploadFile(Request $request)
     {
         $request->file->storeAs('/public', $request['file_name']);
@@ -58,7 +48,6 @@ class UploadController extends Controller
         }
         $file = File::get($path);
         $type = File::mimeType($path);
-
         $response = Response::make($file, 200);
         $response->header("Content-Type", $type);
 

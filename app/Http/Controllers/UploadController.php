@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Image;
+use App\Models\UserInfo;
 use App\Models\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -39,7 +40,23 @@ class UploadController extends Controller
             "message" => "File successfully uploaded",
         ]);
     }
+    public function uploadAvatar(Request $request)
+    {
+        $request->file->storeAs('/public', $request['file_name']);
+        Log::debug(storage_path('app\public\\' . $request['file_name']));
 
+        $path = storage_path('app\public\\' .  $request['file_name']);
+        if (!File::exists($path)) {
+            abort(404);
+        }
+
+        UserInfo::where('access_token', $request['access_token'])
+                ->update(['avatar' => $request['file_name']]);    
+
+        return response()->json([
+            "message" => "File successfully uploaded",
+        ]);
+    }
     public function getImage(Request $request)
     {
         $path = storage_path('app\public\\' . $request->filename);

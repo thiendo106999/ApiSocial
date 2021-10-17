@@ -24,6 +24,7 @@ class ArticleController extends Controller
     public function getArticles()
     {
         $articles =  Article::all();
+       
         $datas = array();
         foreach ($articles as $article) {
             $data['id'] = $article->id;
@@ -33,13 +34,16 @@ class ArticleController extends Controller
             $video = Video::where('article_id', $article->id);
             $images = Image::where('article_id', $article->id);
             if ($video != null) {
+                Log::debug(1);
                 $data['video'] = $video->pluck('url')->first();
             }
             if ($images != null) {
                 $data['images'] = $images->pluck('url');
             }
             array_push($datas, $data);
+            
         }
+        Log::debug($datas);
         return response(
             $datas
         );

@@ -27,8 +27,9 @@ Route::get('/articles', 'App\Http\Controllers\ArticleController@getArticles');
 
 Route::post('/create_user_info', 'App\Http\Controllers\UserController@createInfo');
 Route::post('/check_new_user', 'App\Http\Controllers\UserController@checkNewUser');
-Route::post('/get_use_info', 'App\Http\Controllers\UserController@getUserInfo');
+Route::post('/get_user_info', 'App\Http\Controllers\UserController@getUserInfo');
 Route::post('/upload_file', 'App\Http\Controllers\UploadController@uploadFile');
+Route::post('/upload_avatar', 'App\Http\Controllers\UploadController@uploadAvatar');
 Route::post('/upload_article', 'App\Http\Controllers\ArticleController@create');
 Route::get('/storage/{filename}', function (Request $request)
 {

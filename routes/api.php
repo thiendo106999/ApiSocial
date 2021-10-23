@@ -7,6 +7,7 @@ use App\Models\Agriculcultural;
 use App\Models\KindOfAgricultural;
 use App\Models\UserInfo;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 
 /*
@@ -24,6 +25,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::get('/articles', 'App\Http\Controllers\ArticleController@getArticles');
+Route::post('/articles', 'App\Http\Controllers\ArticleController@getArticles');
+
+Route::post('/personal_page', 'App\Http\Controllers\ArticleController@getPersonalPage');
+
 
 Route::post('/create_user_info', 'App\Http\Controllers\UserController@createInfo');
 Route::post('/check_new_user', 'App\Http\Controllers\UserController@checkNewUser');
@@ -31,6 +36,7 @@ Route::post('/get_user_info', 'App\Http\Controllers\UserController@getUserInfo')
 Route::post('/upload_file', 'App\Http\Controllers\UploadController@uploadFile');
 Route::post('/upload_avatar', 'App\Http\Controllers\UploadController@uploadAvatar');
 Route::post('/upload_article', 'App\Http\Controllers\ArticleController@create');
+
 Route::get('/storage/{filename}', function (Request $request)
 {
     $path = storage_path('app\public\\' . $request->filename);

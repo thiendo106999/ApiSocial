@@ -13,18 +13,15 @@ use Illuminate\Support\Facades\Log;
 
 class ArticleController extends Controller
 {
-    public function index()
+    public function getPersonalPage(Request $request)
     {
-        return response([
-            'alo' => Article::find(1)->images()->get(),
-            "image" => Image::find(2)->article()->get(),
-            'video' => Video::find(1)->article()->get()
-        ]);
-    }
-    public function getArticles()
-    {
-        $articles =  Article::all();
-       
+
+        $user = UserInfo::where('access_token', $request['access_token'])
+            ->select('id', 'name', 'job', 'address', 'avatar', 'year_of_birth')
+            ->get()
+            ->first();
+
+        $articles = Article::where('user_id', $user['id'])->get();
         $datas = array();
         foreach ($articles as $article) {
             $data['id'] = $article->id;
@@ -34,16 +31,54 @@ class ArticleController extends Controller
             $video = Video::where('article_id', $article->id);
             $images = Image::where('article_id', $article->id);
             if ($video != null) {
-                Log::debug(1);
                 $data['video'] = $video->pluck('url')->first();
             }
             if ($images != null) {
                 $data['images'] = $images->pluck('url');
             }
             array_push($datas, $data);
-            
         }
+
         Log::debug($datas);
+        return response()->json([
+            'user_name' => $user['name'],
+            'avatar' => $user['avatar'],
+            'articles' => $datas
+        ]);
+    }
+    public function getArticles(Request $request)
+    {
+        try {
+            $query = Tag::query();
+            if (!empty($request['tags'])) {
+                $tags = explode(' ', $request['tags']);
+                foreach ($tags as $tag) {
+                    $query->orWhere('name_tag', $tag);
+                }
+            }
+            $articles = Article::whereIn('id', $query->distinct()->get('article_id')->toArray())->get();
+            $datas = array();
+            foreach ($articles as $article) {
+                $data['id'] = $article->user_id;
+                $data['access_token'] = UserInfo::find($article->user_id)->pluck('access_token')->first();
+                $data['content'] = $article->content;
+                $data['like'] = $article->like;
+                $data['created_at'] = (string)date('d-m-Y H:i:s ', strtotime($article->created_at));
+                $video = Video::where('article_id', $article->id);
+                $images = Image::where('article_id', $article->id);
+                if ($video != null) {
+                    Log::debug(1);
+                    $data['video'] = $video->pluck('url')->first();
+                }
+                if ($images != null) {
+                    $data['images'] = $images->pluck('url');
+                }
+                array_push($datas, $data);
+            }
+        } catch (Exception $e) {
+            Log::debug('Get acticles: ' . $e);
+        }
+
         return response(
             $datas
         );
@@ -78,6 +113,6 @@ class ArticleController extends Controller
             'article_id' => $article->id
         ]);
     }
-  
+
     //php artisan serv --host 192.168.1.5        
 }

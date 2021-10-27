@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = ['name', 'user_id', 'kind_id', 'phone_number', 'address', 'image', 'date', 'hexta'];
+    protected $fillable = ['name', 'user_id', 'status' , 'kind_id', 'phone_number', 'address', 'image', 'date', 'hexta'];
     use HasFactory;
 
     public function auth() {

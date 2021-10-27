@@ -67,7 +67,6 @@ class ArticleController extends Controller
                 $video = Video::where('article_id', $article->id);
                 $images = Image::where('article_id', $article->id);
                 if ($video != null) {
-                    Log::debug(1);
                     $data['video'] = $video->pluck('url')->first();
                 }
                 if ($images != null) {

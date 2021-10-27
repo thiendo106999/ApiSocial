@@ -15,8 +15,6 @@ class UploadController extends Controller
     public function uploadFile(Request $request)
     {
         $request->file->storeAs('/public', $request['file_name']);
-        Log::debug(storage_path('app\public\\' . $request['file_name']));
-
         $path = storage_path('app\public\\' .  $request['file_name']);
         if (!File::exists($path)) {
             abort(404);
@@ -43,8 +41,6 @@ class UploadController extends Controller
     public function uploadAvatar(Request $request)
     {
         $request->file->storeAs('/public', $request['file_name']);
-        Log::debug(storage_path('app\public\\' . $request['file_name']));
-
         $path = storage_path('app\public\\' .  $request['file_name']);
         if (!File::exists($path)) {
             abort(404);

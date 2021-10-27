@@ -19,9 +19,10 @@ class CreateProductsTable extends Migration
             $table->integer('user_id');
             $table->string('phone_number');
             $table->string('address');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->string('date');
-            $table->integer('hexta');     
+            $table->integer('hexta');
+            $table->string('status')->default('registered');     
             $table->integer('kind_id');       
             $table->timestamps();
 

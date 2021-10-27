@@ -68,8 +68,10 @@ Route::post('/price_list', 'App\Http\Controllers\PriceAgriculturalController@get
 Route::post('/get_data_price_list', 'App\Http\Controllers\PriceAgriculturalController@getDate');
 
 Route::post('/products', 'App\Http\Controllers\ProductController@getProducts');
-Route::get('set_up_spinner_sell', 'App\Http\Controllers\ProductController@settupSpinner');
+Route::post('/registered_product', 'App\Http\Controllers\ProductController@registeredProduct');
+Route::post('/get_registered_product', 'App\Http\Controllers\ProductController@getRegisteredProduct');
 
+Route::get('set_up_spinner_sell', 'App\Http\Controllers\ProductController@settupSpinner');
 Route::get('/add_data', 'App\Http\Controllers\AddDataController@addData');
 //php artisan serv --host 192.168.1.7   
 

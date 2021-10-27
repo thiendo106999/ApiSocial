@@ -22,6 +22,7 @@ class CreatePriceAgriculturalTable extends Migration
             $table->string('date');
             $table->timestamps();
             $table->foreign('kind')->references('id')->on('type_of_agricultural_products');
+            $table->unique(['name', 'province', 'date']);
         });
     }
 

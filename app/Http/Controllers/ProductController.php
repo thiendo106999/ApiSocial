@@ -10,8 +10,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-use function PHPUnit\Framework\isEmpty;
-
 class ProductController extends Controller
 {
 
@@ -34,6 +32,7 @@ class ProductController extends Controller
         $datas = array();
         foreach ($products as $product) {
             $data = [];
+            $data['id'] = $product->id;
             $data['name'] = $product->name;
             $data['user_name'] = UserInfo::query()->where('id', $product->user_id)->value('name');
             $data['address'] = $product->address;
@@ -98,6 +97,7 @@ class ProductController extends Controller
         $datas = array();
         foreach ($products as $product) {
             $data = [];
+            $data['id'] = $product->id;
             $data['name'] = $product->name;
             $data['user_name'] = UserInfo::query()->where('id', $product->user_id)->value('name');
             $data['address'] = $product->address;
@@ -110,5 +110,14 @@ class ProductController extends Controller
         }
 
         return response()->json($datas);
+    }
+
+    public function delete($id)
+    {
+        Product::destroy($id);
+
+        return response()->json([
+            'message' => 'Delete successful'
+        ]);
     }
 }

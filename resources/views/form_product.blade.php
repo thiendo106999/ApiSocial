@@ -23,6 +23,9 @@
               <td> {{$product['address']}} </td>
               <td> {{$product['date']}} </td>
               <td> {{$product['hexta']}} </td>
+              <td>
+                <a class="btn btn-danger" href="api/admin_delete/{{$product['id']}}" >Xóa</a> 
+              </td>
           </tr>
          @endforeach
    </tbody>

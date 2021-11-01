@@ -73,9 +73,11 @@ Route::post('/get_registered_product', 'App\Http\Controllers\ProductController@g
 
 Route::get('set_up_spinner_sell', 'App\Http\Controllers\ProductController@settupSpinner');
 Route::get('/add_data', 'App\Http\Controllers\AddDataController@addData');
+Route::get('delete/{id}', 'App\Http\Controllers\ProductController@delete')->name('delete');
 
-Route::delete('delete/{id}', 'App\Http\Controllers\ProductController@delete')->name('delete');
-Route::get('update/{id}', 'App\Http\Controllers\AdminController@update')->name('delete');
+Route::get('admin_delete/{id}', 'App\Http\Controllers\AdminController@delete')->name('delete');
+Route::get('update/{id}', 'App\Http\Controllers\AdminController@update')->name('update');
+Route::get('update_all/', 'App\Http\Controllers\AdminController@updateAll')->name('update_all');
 
 //php artisan serv --host 192.168.1.7   
 

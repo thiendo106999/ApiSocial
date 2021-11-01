@@ -11,6 +11,9 @@
             <th> Địa chỉ </th>
             <th> Ngày Thu hoạch  </th>
             <th> Hexta</th>
+            <td>
+                <a class="btn btn-danger" href="api/update_all" >Duyệt tất cả</a> 
+            </td>
         </tr>
     </thead>
     <tbody>

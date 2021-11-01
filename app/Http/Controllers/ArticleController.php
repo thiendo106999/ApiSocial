@@ -21,7 +21,7 @@ class ArticleController extends Controller
             ->get()
             ->first();
 
-        $articles = Article::where('user_id', $user['id'])->get();
+        $articles = Article::where('user_id', $user['id'])->orderBy('created_at')->get();
         $datas = array();
         foreach ($articles as $article) {
             $data['id'] = $article->id;
@@ -38,8 +38,6 @@ class ArticleController extends Controller
             }
             array_push($datas, $data);
         }
-
-        Log::debug($datas);
         return response()->json([
             'user_name' => $user['name'],
             'avatar' => $user['avatar'],
@@ -56,11 +54,12 @@ class ArticleController extends Controller
                     $query->orWhere('name_tag', $tag);
                 }
             }
-            $articles = Article::whereIn('id', $query->distinct()->get('article_id')->toArray())->get();
+            $article_ids = $query->distinct()->get('article_id')->toArray();
+            $articles = Article::whereIn('id', $article_ids)->orderBy('created_at')->get();
             $datas = array();
             foreach ($articles as $article) {
-                $data['id'] = $article->user_id;
-                $data['access_token'] = UserInfo::find($article->user_id)->pluck('access_token')->first();
+                $data['id'] = $article->id;
+                $data['access_token'] = UserInfo::where('id', $article->user_id)->pluck('access_token')->first();
                 $data['content'] = $article->content;
                 $data['like'] = $article->like;
                 $data['created_at'] = (string)date('d-m-Y H:i:s ', strtotime($article->created_at));
@@ -82,7 +81,6 @@ class ArticleController extends Controller
             $datas
         );
     }
-
     public function create(Request $request)
     {
         try {

@@ -7,6 +7,7 @@ use App\Models\UserInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
 
 class AdminController extends Controller
 {
@@ -25,13 +26,14 @@ class AdminController extends Controller
             $datas = Product::query()->where('status', 'approved')->get();
             $products = array();
             foreach ($datas as $product) {
-                $temp['name'] = $product->name;
-                $temp['user_name'] = UserInfo::find($product->user_id)->name;
-                $temp['phone_number'] = $product->phone_number;
-                $temp['address'] = $product->address;
-                $temp['date'] = $product->date;
-                $temp['hexta'] = $product->hexta;
-                array_push($products, $temp);
+                $product['id'] = $product->id;
+                $product['name'] = $product->name;
+                $product['user_name'] = UserInfo::find($product->user_id)->name;
+                $product['phone_number'] = $product->phone_number;
+                $product['address'] = $product->address;
+                $product['date'] = $product->date;
+                $product['hexta'] = $product->hexta;
+                array_push($products, $product);
             }
             return view('form_product')->with(['products' => $products]);
         }
@@ -63,11 +65,18 @@ class AdminController extends Controller
 
     public function delete(Request $request, $id)
     {
-        Product::where('id', $id)->delete();
+        Product::where('id', $id)->delete();  
+        return Redirect::back();
     }
     
     public function update(Request $request, $id)
     {
         Product::where('id', $id)->update(['status' => 'approved']);
+        return Redirect::back();
+    }
+    public function updateAll(Request $request)
+    {
+        Product::where('status', 'registered')->update(['status' => 'approved']);
+        return Redirect::back();
     }
 }

@@ -12,13 +12,17 @@ class PriceAgriculturalController extends Controller
 {
     public function getPriceList(Request $request)
     {
-        Log::debug($request);
-        $kind = KindOfAgricultural::where('name', $request['kind'])->select('id')->get()->first();
         $query  = Agriculcultural::query();
-        $data = $query->where('date', $request['date'])
-                ->where('kind', $kind['id'])
-                ->select('name', 'price')
-                ->get();
+
+        if(!empty($request['kind'])) {
+            $kind = KindOfAgricultural::where('name', $request['kind'])->select('id')->get()->first();
+            $query->where('kind', $kind['id']);
+        }
+        if(!empty($request['date'])) {
+            $kind = KindOfAgricultural::where('name', $request['kind'])->select('id')->get()->first();
+            $query->where('date', $request['date']);
+        }
+        $data = $query->select('name', 'price')->get();
 
         Log::debug($data);
         return response()->json(

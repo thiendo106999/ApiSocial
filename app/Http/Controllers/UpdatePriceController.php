@@ -35,7 +35,6 @@ class UpdatePriceController extends Controller
                                 ]);
                                 $item->save();
                             }
-                           
                         }
                     } else return 'File không đúng định dạng';
                     return redirect('dashboard')->with(['content'=>'Cập nhật thành công']);

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Article extends Model
 {
-    protected $fillable = [ 'user_id', 'content', 'like'];
+    protected $fillable = [ 'user_id', 'content', 'like', 'media_id'];
 
     public function images() {
         return $this->hasOne(Image::class, 'article_id');

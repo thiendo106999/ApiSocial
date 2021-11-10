@@ -18,6 +18,7 @@ class CreateArticlesTable extends Migration
             $table->text('content');
             $table->integer('like');
             $table->integer('user_id');
+            $table->string('media_id')->nullable();
             $table->timestamps();
 
             //$table->foreign('user_id')->references('id')->on('user_infos')->onDelete();

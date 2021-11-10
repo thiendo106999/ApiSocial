@@ -21,6 +21,8 @@ class CreateUserInfosTable extends Migration
             $table->string('year_of_birth');
             $table->string('access_token');
             $table->string('avatar')->nullable();
+            $table->boolean('is_writable')->nullable();
+            $table->text('list_id_articles')->nullable();
             $table->timestamps();
         });
     }

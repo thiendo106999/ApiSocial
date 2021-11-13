@@ -25,6 +25,8 @@ class ArticleController extends Controller
             $listArticles = explode(',', $user['list_id_articles']);
             $query->orWhereIn('articles.id', $listArticles);
         }
+        $user_old = UserInfo::where('access_token', $request->access_token)->select('id', 'articles_like')->first();
+        $artile_like = explode(',', $user_old['articles_like']);
 
         $articles = $query
             ->orderBy('created_at')
@@ -52,6 +54,13 @@ class ArticleController extends Controller
                 $data['video'] = $article['url'];
                 $data['images'] = $article['media_id'];
 
+                $like = array_search($article['id'], $artile_like); 
+
+                if ($like !== false) {
+                    $data['liked'] = true;
+                } else {
+                    $data['liked'] = false;
+                }
                 array_push($datas, $data);
             }
 
@@ -61,6 +70,7 @@ class ArticleController extends Controller
             'articles' => $datas
         ]);
     }
+
     public function getArticles(Request $request)
     {
         try {
@@ -86,8 +96,9 @@ class ArticleController extends Controller
                     'media_id',
                     'articles.created_at',
                     'videos.url as url',
-                )
-                ->get();
+                )->get();
+            $user_old = UserInfo::where('access_token', $request->access_token)->select('id', 'articles_like')->first();
+            $listArticles = explode(',', $user_old['articles_like']);
 
             $datas = array();
             foreach ($articles as $article) {
@@ -101,6 +112,14 @@ class ArticleController extends Controller
                 $data['video'] = $article['url'];
                 $data['images'] = $article['media_id'];
 
+                $like = array_search($article['id'], $listArticles); 
+
+                if ($like !== false) {
+                    $data['liked'] = true;
+                } else {
+                    $data['liked'] = false;
+                }
+                
                 array_push($datas, $data);
             }
             Log::debug($datas);
@@ -142,6 +161,50 @@ class ArticleController extends Controller
         return response()->json([
             'article_id' => $article->id
         ]);
+    }
+
+    public function share(Request $request)
+    {
+        $user_old = UserInfo::where('access_token', $request['access_token'])->select('id', 'list_id_articles')->first();
+        Log::debug($user_old);
+        $listArticles = explode(',', $user_old['list_id_articles']);
+        Log::debug($listArticles);
+        if ($user_old['list_id_articles'] === '') {
+            $user = UserInfo::find(intval($user_old->id));
+            $user->list_id_articles = $request['article_id'];
+            $user->save();
+        } elseif (!in_array( $request['article_id'], $listArticles)) {
+            $user = UserInfo::find(intval($user_old->id));
+            $user->list_id_articles = $user_old['list_id_articles'] . ',' . $request['article_id'];
+            $user->save();
+        };
+    }
+
+    public function like(Request $request)
+    {
+        $user_old = UserInfo::where('access_token', $request['access_token'])->select('id', 'articles_like')->first();
+        Log::debug($user_old);
+        $listArticles = explode(',', $user_old['articles_like']);
+        
+        $like = array_search($request['article_id'], $listArticles); 
+        $user = UserInfo::find(intval($user_old->id));
+        $article = Article::find(intval($request['article_id']));
+
+        if ($like === false) {
+            if ($user_old['articles_like'] === '') {
+                $user->articles_like = $request['article_id'];
+            } elseif (!in_array( $request['article_id'], $listArticles)) {
+                $user->articles_like = $user_old['articles_like'] . ',' . $request['article_id'];
+            };
+            $article->like++;
+        } else {
+            unset($listArticles[$like]);
+            $user->articles_like = implode(",", $listArticles);
+            if ($article->like != 0 )
+                $article->like--;
+        }
+        $user->save();
+        $article->save();
     }
 
     //php artisan serv --host 192.168.1.5        

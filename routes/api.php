@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Response;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/articles', 'App\Http\Controllers\ArticleController@getArticles');
+Route::get('/articles/{access_token}', 'App\Http\Controllers\ArticleController@getArticles');
 Route::post('/articles', 'App\Http\Controllers\ArticleController@getArticles');
 
 Route::post('/personal_page', 'App\Http\Controllers\ArticleController@getPersonalPage');
@@ -78,6 +78,10 @@ Route::get('delete/{id}', 'App\Http\Controllers\ProductController@delete')->name
 Route::get('admin_delete/{id}', 'App\Http\Controllers\AdminController@delete')->name('delete');
 Route::get('update/{id}', 'App\Http\Controllers\AdminController@update')->name('update');
 Route::get('update_all/', 'App\Http\Controllers\AdminController@updateAll')->name('update_all');
+
+Route::post('share', 'App\Http\Controllers\ArticleController@share');
+Route::post('like', 'App\Http\Controllers\ArticleController@like');
+
 
 //php artisan serv --host 192.168.1.7   
 

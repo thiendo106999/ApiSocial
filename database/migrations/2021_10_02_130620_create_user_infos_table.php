@@ -23,6 +23,7 @@ class CreateUserInfosTable extends Migration
             $table->string('avatar')->nullable();
             $table->boolean('is_writable')->nullable();
             $table->text('list_id_articles')->nullable();
+            $table->text('articles_like')->nullable();
             $table->timestamps();
         });
     }

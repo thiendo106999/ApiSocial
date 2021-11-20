@@ -40,4 +40,16 @@ class UserController extends Controller
         $response = UserInfo::where('access_token', $request->token)->first();
         return response($response);
     }
+
+    public function getRule(Request $request)
+    {
+        Log::debug($request->access_token);
+        $response = UserInfo::where('access_token', $request->access_token)->select('is_writable')->first();
+        Log::debug($response['is_writable']);
+        if ($response['is_writable'] == TRUE) {
+            
+            return "true";
+        }
+        return "false";
+    }
 }

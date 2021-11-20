@@ -31,6 +31,7 @@ Route::post('/personal_page', 'App\Http\Controllers\ArticleController@getPersona
 
 
 Route::post('/create_user_info', 'App\Http\Controllers\UserController@createInfo');
+Route::get('/rule/{access_token}', 'App\Http\Controllers\UserController@getRule');
 Route::post('/check_new_user', 'App\Http\Controllers\UserController@checkNewUser');
 Route::post('/get_user_info', 'App\Http\Controllers\UserController@getUserInfo');
 Route::post('/upload_file', 'App\Http\Controllers\UploadController@uploadFile');

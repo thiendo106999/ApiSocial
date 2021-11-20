@@ -9,6 +9,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
+use function PHPUnit\Framework\isEmpty;
+
 class ArticleController extends Controller
 {
     public function getPersonalPage(Request $request)
@@ -25,7 +27,7 @@ class ArticleController extends Controller
             $listArticles = explode(',', $user['list_id_articles']);
             $query->orWhereIn('articles.id', $listArticles);
         }
-        $user_old = UserInfo::where('access_token', $request->access_token)->select('id', 'articles_like')->first();
+        $user_old = UserInfo::where('access_token', $request['my_access_token'])->select('id', 'articles_like')->first();
         $artile_like = explode(',', $user_old['articles_like']);
 
         $articles = $query
@@ -74,6 +76,7 @@ class ArticleController extends Controller
     public function getArticles(Request $request)
     {
         try {
+            $listArticles = array(-1);
             $query = Tag::query();
             if (!empty($request['tags'])) {
                 $tags = explode(' ', $request['tags']);
@@ -97,9 +100,11 @@ class ArticleController extends Controller
                     'articles.created_at',
                     'videos.url as url',
                 )->get();
-            $user_old = UserInfo::where('access_token', $request->access_token)->select('id', 'articles_like')->first();
-            $listArticles = explode(',', $user_old['articles_like']);
 
+            if ($request['access_token'] != null) {
+                $user_old = UserInfo::where('access_token', $request['access_token'])->select('id', 'articles_like')->first();
+                $listArticles = explode(',', $user_old['articles_like']);
+            }
             $datas = array();
             foreach ($articles as $article) {
                 $data['id'] = $article['id'];
@@ -112,17 +117,15 @@ class ArticleController extends Controller
                 $data['video'] = $article['url'];
                 $data['images'] = $article['media_id'];
 
-                $like = array_search($article['id'], $listArticles); 
+                $like = array_search($article['id'], $listArticles) ?? null; 
 
                 if ($like !== false) {
                     $data['liked'] = true;
                 } else {
                     $data['liked'] = false;
                 }
-                
                 array_push($datas, $data);
             }
-            Log::debug($datas);
         } catch (Exception $e) {
             Log::debug('Get acticles: ' . $e);
         }
@@ -134,7 +137,6 @@ class ArticleController extends Controller
     public function create(Request $request)
     {
         try {
-            Log::debug($request['media_id']);
             $access_token = $request->header('access_token');
             $user = UserInfo::query();
             $user = $user->where('access_token', $access_token)->first();
@@ -166,10 +168,8 @@ class ArticleController extends Controller
     public function share(Request $request)
     {
         $user_old = UserInfo::where('access_token', $request['access_token'])->select('id', 'list_id_articles')->first();
-        Log::debug($user_old);
         $listArticles = explode(',', $user_old['list_id_articles']);
-        Log::debug($listArticles);
-        if ($user_old['list_id_articles'] === '') {
+        if ($user_old['list_id_articles'] == '') {
             $user = UserInfo::find(intval($user_old->id));
             $user->list_id_articles = $request['article_id'];
             $user->save();
@@ -183,15 +183,14 @@ class ArticleController extends Controller
     public function like(Request $request)
     {
         $user_old = UserInfo::where('access_token', $request['access_token'])->select('id', 'articles_like')->first();
-        Log::debug($user_old);
         $listArticles = explode(',', $user_old['articles_like']);
         
         $like = array_search($request['article_id'], $listArticles); 
         $user = UserInfo::find(intval($user_old->id));
         $article = Article::find(intval($request['article_id']));
-
+        Log::debug($user_old['articles_like']);
         if ($like === false) {
-            if ($user_old['articles_like'] === '') {
+            if ($user_old['articles_like'] == '') {
                 $user->articles_like = $request['article_id'];
             } elseif (!in_array( $request['article_id'], $listArticles)) {
                 $user->articles_like = $user_old['articles_like'] . ',' . $request['article_id'];
